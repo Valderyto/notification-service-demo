@@ -1,0 +1,38 @@
+# Определение: Модули верхнего уровня не должны зависеть от модулей нижнего уровня. Оба должны зависеть от абстракций.
+# Абстракции не должны зависеть от деталей. Детали должны зависеть от абстракций.
+
+from abc import ABC, abstractmethod
+
+# Определяем интерфейс для сервиса уведомлений
+class NotificationService(ABC):
+    @abstractmethod
+    def send(self, message):
+        pass
+
+# Реализация для EmailService
+class EmailService(NotificationService):
+    def send(self, message):
+        print(f"Отправка email: {message}")
+
+# Реализация для SMSService
+class SMSService(NotificationService):
+    def send(self, message):
+        print(f"Отправка SMS: {message}")
+
+# Класс уведомлений, который зависит от абстракции NotificationService
+class Notification:
+    def __init__(self, service: NotificationService):
+        self.service = service
+
+    def notify(self, message):
+        self.service.send(message)
+
+# Использование
+email_service = EmailService()
+notification = Notification(email_service)
+notification.notify("У вас новое сообщение!")
+
+# Изменяем на SMSService
+sms_service = SMSService()
+notification_sms = Notification(sms_service)
+notification_sms.notify("У вас новое SMS сообщение!")
